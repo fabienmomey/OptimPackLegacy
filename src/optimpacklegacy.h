@@ -139,7 +139,7 @@ extern opl_status_t opl_get_status(opl_context_t* ctx);
  * @param ctx   Context for error reporting.
  *
  * @return If current context status is `OPL_SYSTEM_ERROR`, the system error
- *         code (a.k.a. `errno`) when the error occured is returned; otherwise,
+ *         code (a.k.a. `errno`) when the error occurred is returned; otherwise,
  *         0 is returned.
  */
 extern int opl_get_errno(opl_context_t* ctx);
@@ -163,7 +163,7 @@ extern const char* opl_get_message(opl_context_t* ctx);
 extern const char* opl_get_default_message(opl_status_t status);
 
 /**
- * Intialize a context.
+ * Initialize a context.
  *
  * This function initializes a context to some consistent contents.  It must
  * be called before using the context.
@@ -173,7 +173,7 @@ extern const char* opl_get_default_message(opl_status_t status);
 extern void opl_initialize_context(opl_context_t* ctx);
 
 /**
- * The different strorage types.
+ * The different storage types.
  */
 typedef enum {
   OPL_VOLATILE = 0, /** Storage is volatile, a copy must be done. */
@@ -263,9 +263,9 @@ extern opl_status_t opl_success(opl_context_t* ctx);
  * interval is initially chosen so that it contains a minimizer of the
  * modified function:
  *
- * <pre>
- *       psi(stp) = f(stp) - f(0) - ftol*stp*g(0)
- * </pre>
+ * ```
+ * psi(stp) = f(stp) - f(0) - ftol*stp*g(0)
+ * ````
  *
  * where `f(0)` and `g(0) = f'(0)` are the value of the function and its
  * derivative for `stp = 0`.  If `psi(stp) ≤ 0` and `g(stp) ≥ 0` for some step,
@@ -273,15 +273,15 @@ extern opl_status_t opl_success(opl_context_t* ctx);
  * The algorithm is designed to find a step that satisfies the sufficient
  * decrease condition:
  *
- * <pre>
- *     f(stp) <= f(0) + ftol*stp*g(0),                            (1)
- * </pre>
+ * ```
+ * f(stp) <= f(0) + ftol*stp*g(0),                            (1)
+ * ```
  *
  * and the curvature condition:
  *
- * <pre>
- *     abs(g(stp)) <= gtol*abs(g(0)).                             (2)
- * </pre>
+ * ```
+ * abs(g(stp)) <= gtol*abs(g(0)).                             (2)
+ * ```
  *
  * Relations (1) and (2) are called the strong Wolfe conditions.  If `ftol` is
  * less than `gtol` and if, for example, the function is bounded below, then
@@ -295,7 +295,7 @@ extern opl_status_t opl_success(opl_context_t* ctx);
  *
  * A typical invocation of the method has the following outline:
  *
- * <pre>
+ * ```
  * opl_csrch_create_workspace();
  * double f = ...;   // function value for STP=0
  * double g = ...;   // derivative value for STP=0
@@ -325,7 +325,7 @@ extern opl_status_t opl_success(opl_context_t* ctx);
  *         exit(1);
  *     }
  * }
- * </pre>
+ * ```
  *
  * @subsection refs References
  *
@@ -399,7 +399,7 @@ extern const char* opl_csrch_get_reason(opl_csrch_workspace_t* ws);
  * memory.  A line search instance can be stored into any memory block of
  * sufficient size and aligned on a multiple of the size of a `double`.
  * However, the line search workspace can be assumed to have been properly
- * initilaized only after a first call to @link #opl_csrch_start.
+ * initialized only after a first call to @link #opl_csrch_start.
  *
  * @return The size in bytes of a Moré & Thuente line search instance.
  */
@@ -903,6 +903,23 @@ opl_vmlmb_iterate(opl_vmlmb_workspace_t* ws,
    the same parameters. */
 extern opl_task_t
 opl_vmlmb_restart(opl_vmlmb_workspace_t* ws);
+
+/**
+ * @brief Start a new VMLM-B iteration keeping the memorized Hessian model.
+ *
+ * This function initiates a new VMLM-B iteration.  Compared to @ref
+ * opl_vmlmb_restart, the memorized L-BFGS approximation of the Hessian is kept.
+ * Calling this function is not considered as a restart (hence the number of
+ * objective function calls, of iterations and of restarts are left unchanged).
+ *
+ * @param ws    The address of the VMLM-B workspace.
+ *
+ * @return @ref OPL_TASK_FG meaning that the caller shall compute the objective
+ * function and its gradient before calling @ref opl_vmlmb_iterate.  @ref
+ * OPL_ERROR is returned if @a ws is `NULL`.
+ */
+extern opl_task_t opl_vmlmb_warm_restart(
+   opl_vmlmb_workspace_t* ws);
 
 /* Restore last line search starting point.  Calling this is only effective if
    task is OPL_TASK_FG. */
